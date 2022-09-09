@@ -9,6 +9,6 @@ if __name__ == "__main__":
     for day in days:
         orders.extend(deco.get_daily_orders(day))
 
-    # List compre
+    # List comprehension
     ids = [(order["order_id"], order["billing_details"]["company"]) for order in orders]
     print(ids)
