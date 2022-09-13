@@ -1,11 +1,28 @@
 import requests
 import os
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 from calendar import monthrange
 
 USERNAME = os.environ["DECO_USER"]
 PASSWORD = os.environ["DECO_PASS"]
 API_URL = "https://straighttohell.eu/api/json/manage_orders/find"
+
+
+def get_months():
+    today = date.today()
+    first_month = date(today.year-1, today.month, 1)
+
+    months = [first_month]
+    month = first_month
+    for i in range(12):
+        if month.month == 12:
+            next_month = date(month.year+1, 1, 1)
+        else:
+            next_month = date(month.year, month.month+1, 1)
+        months.append(next_month)
+        month = next_month
+
+    return months
 
 
 def get_daily_orders(day):
@@ -28,59 +45,37 @@ def get_daily_orders(day):
     return bonifico7
 
 
-# def get_weekly_priorities():
-#     """Return a list of priorities for the current week
-#
-#     Retrieve the data of the orders from Deco API
-#     """
-#
-#     first_day, last_day = get_days()
-#
-#     first_day_formatted = first_day.strftime("%Y-%m-%dT00:00:00")
-#     last_day_formatted = last_day.strftime("%Y-%m-%dT00:00:00")
-#
-#     params = {
-#         "field": "1",
-#         "condition": "6",
-#         "date1": first_day_formatted,
-#         "sortby": 5,
-#         "username": USERNAME,
-#         "password": PASSWORD
-#     }
-#
-#     response = requests.get(API_URL, params=params)
-#     priorities = get_priorities(response.json())
-#
-#     return priorities
-
-
-def get_days(month):
+def get_days(month, year):
     """
     Returns the first, the last day of the selected month and the number of days in the month.
 
     :param month: the number of the month.
     :type month: int
+    :param year: the number of the year.
+    :type year: int
     :return: first_day, last_day_ num_of_days
     """
 
-    first_day = date(date.today().year, month, 1)
+    first_day = date(year, month, 1)
 
     num_of_days = monthrange(date.today().year, month)
 
-    last_day = date(date.today().year, month, num_of_days[1])
+    last_day = date(year, month, num_of_days[1])
 
     return first_day, last_day, num_of_days[1]
 
 
-def get_month_days(month):
+def get_month_days(month, year):
     """
     Returns a list with all the days of the selected month.
 
     :param month: the number of the month.
     :type month: int
+    :param year: the number of the year
+    :type year: int
     :return: month_days
     """
-    first_day, last_day, num_of_days = get_days(month)
+    first_day, last_day, num_of_days = get_days(month, year)
 
     month_days = []
     day = date(first_day.year, first_day.month, first_day.day)
