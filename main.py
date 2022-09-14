@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, \
-    QTableWidget, QTableWidgetItem
+    QTableWidget, QTableWidgetItem, QHeaderView
 import deco
 
 MONTHS_FOR_CB = {
@@ -21,6 +21,7 @@ if __name__ == "__main__":
 
     months = deco.get_months()
 
+    # TODO: Make the app appear at the center
     app = QApplication([])
     window = QWidget()
     window.setWindowTitle("Bonifico 7gg")
@@ -55,6 +56,7 @@ if __name__ == "__main__":
             status_label.setText("Non sono stati trovati elementi")
             window.repaint()
         else:
+            # TODO: Add money
             # List comprehension
             ids = [(order["order_id"], order["billing_details"]["company"]) for order in orders]
             print(ids)
@@ -69,7 +71,6 @@ if __name__ == "__main__":
     layout.addLayout(h_layout)
 
     table = QTableWidget()
-    table.setHorizontalHeaderLabels(["Numero Ordine", "Nome Cliente"])
     layout.addWidget(table)
 
     def populate_table(orders):
@@ -84,6 +85,11 @@ if __name__ == "__main__":
 
             table.setItem(key, 0, order_id)
             table.setItem(key, 1, order_customer)
+
+        header = table.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        table.setHorizontalHeaderLabels(["Numero Ordine", "Nome Cliente"])
 
 
     layout.addWidget(status_label)
