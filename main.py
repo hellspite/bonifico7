@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, \
-    QTableWidget, QTableWidgetItem, QHeaderView
+    QTableWidget, QTableWidgetItem, QHeaderView, QDesktopWidget
 import deco
 
 MONTHS_FOR_CB = {
@@ -21,11 +21,15 @@ if __name__ == "__main__":
 
     months = deco.get_months()
 
-    # TODO: Make the app appear at the center
     app = QApplication([])
     window = QWidget()
     window.setWindowTitle("Bonifico 7gg")
     window.setMinimumWidth(600)
+    rect = window.frameGeometry()
+    screen_center = QDesktopWidget().availableGeometry(window).center()
+    rect.moveCenter(screen_center)
+    window.move(rect.topLeft())
+
     layout = QVBoxLayout()
     layout.addWidget(QLabel("Ciao Marzia, seleziona il mese in cui fare la ricerca."))
     h_layout = QHBoxLayout()
@@ -57,7 +61,6 @@ if __name__ == "__main__":
             status_label.setText("Non sono stati trovati elementi")
             window.repaint()
         else:
-            # TODO: Add money
             # List comprehension
             ids = [(order["order_id"], order["billing_details"]["company"],
                     order["outstanding_balance"]) for order in orders]
