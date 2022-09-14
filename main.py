@@ -25,6 +25,7 @@ if __name__ == "__main__":
     app = QApplication([])
     window = QWidget()
     window.setWindowTitle("Bonifico 7gg")
+    window.setMinimumWidth(600)
     layout = QVBoxLayout()
     layout.addWidget(QLabel("Ciao Marzia, seleziona il mese in cui fare la ricerca."))
     h_layout = QHBoxLayout()
@@ -58,7 +59,8 @@ if __name__ == "__main__":
         else:
             # TODO: Add money
             # List comprehension
-            ids = [(order["order_id"], order["billing_details"]["company"]) for order in orders]
+            ids = [(order["order_id"], order["billing_details"]["company"],
+                    order["outstanding_balance"]) for order in orders]
             print(ids)
             populate_table(ids)
             status_label.setText("Ricerca terminata.")
@@ -76,20 +78,23 @@ if __name__ == "__main__":
     def populate_table(orders):
         rows = len(orders)
         table.setRowCount(rows)
-        table.setColumnCount(2)
+        table.setColumnCount(3)
 
         for key, order in enumerate(orders):
             str_id = str(order[0])
             order_id = QTableWidgetItem(str_id)
             order_customer = QTableWidgetItem(order[1])
+            outstanding_balance = QTableWidgetItem(f"{order[2]}€")
 
             table.setItem(key, 0, order_id)
             table.setItem(key, 1, order_customer)
+            table.setItem(key, 2, outstanding_balance)
 
         header = table.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.Stretch)
-        table.setHorizontalHeaderLabels(["Numero Ordine", "Nome Cliente"])
+        table.setHorizontalHeaderLabels(["Numero Ordine", "Nome Cliente", "Da Pagare"])
 
 
     layout.addWidget(status_label)
