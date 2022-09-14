@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QComboBox
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, \
+    QTableWidget, QTableWidgetItem
 import deco
 
 MONTHS_FOR_CB = {
@@ -17,8 +18,6 @@ MONTHS_FOR_CB = {
 }
 
 if __name__ == "__main__":
-    # month = int(input("Seleziona il mese: "))
-    #
 
     months = deco.get_months()
 
@@ -27,13 +26,16 @@ if __name__ == "__main__":
     window.setWindowTitle("Bonifico 7gg")
     layout = QVBoxLayout()
     layout.addWidget(QLabel("Ciao Marzia, seleziona il mese in cui fare la ricerca."))
+    h_layout = QHBoxLayout()
+
+    status_label = QLabel()
 
     cb = QComboBox()
 
     for month in months:
         cb.addItem(f"{MONTHS_FOR_CB[month.month]} {month.year}")
 
-    layout.addWidget(cb)
+    h_layout.addWidget(cb)
 
     search_btn = QPushButton("Cerca")
 
@@ -43,20 +45,49 @@ if __name__ == "__main__":
 
         days = deco.get_month_days(selected_date.month, selected_date.year)
 
+        status_label.setText("Ricerca in corso...")
+        window.repaint()
         orders = []
         for day in days:
             orders.extend(deco.get_daily_orders(day))
 
-        # List comprehension
-        ids = [(order["order_id"], order["billing_details"]["company"]) for order in orders]
-        print(ids)
+        if len(orders) == 0:
+            status_label.setText("Non sono stati trovati elementi")
+            window.repaint()
+        else:
+            # List comprehension
+            ids = [(order["order_id"], order["billing_details"]["company"]) for order in orders]
+            print(ids)
+            populate_table(ids)
+            status_label.setText("Ricerca terminata.")
+            window.repaint()
+
 
     search_btn.clicked.connect(search)
 
-    layout.addWidget(search_btn)
+    h_layout.addWidget(search_btn)
+    layout.addLayout(h_layout)
+
+    table = QTableWidget()
+    table.setHorizontalHeaderLabels(["Numero Ordine", "Nome Cliente"])
+    layout.addWidget(table)
+
+    def populate_table(orders):
+        rows = len(orders)
+        table.setRowCount(rows)
+        table.setColumnCount(2)
+
+        for key, order in enumerate(orders):
+            str_id = str(order[0])
+            order_id = QTableWidgetItem(str_id)
+            order_customer = QTableWidgetItem(order[1])
+
+            table.setItem(key, 0, order_id)
+            table.setItem(key, 1, order_customer)
+
+
+    layout.addWidget(status_label)
     window.setLayout(layout)
     window.show()
-
-    # TODO: Create table with results
 
     app.exec()
