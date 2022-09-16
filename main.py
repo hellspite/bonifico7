@@ -61,9 +61,16 @@ if __name__ == "__main__":
             status_label.setText("Non sono stati trovati elementi")
             window.repaint()
         else:
-            # List comprehension
-            ids = [(order["order_id"], order["billing_details"]["company"],
-                    order["outstanding_balance"]) for order in orders]
+            ids = []
+            for order in orders:
+                customer = ""
+                if order["billing_details"]["company"] == "":
+                    customer = f"{order['billing_details']['firstname']} {order['billing_details']['lastname']}"
+                else:
+                    customer = order["billing_details"]["company"]
+
+                ids.append((order["order_id"], customer, order["outstanding_balance"]))
+
             print(ids)
             populate_table(ids)
             status_label.setText("Ricerca terminata.")
