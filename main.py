@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, \
     QTableWidget, QTableWidgetItem, QHeaderView, QDesktopWidget
+
 import deco
+from excel import populate_excel
 
 MONTHS_FOR_CB = {
     1: "Gennaio",
@@ -18,6 +20,8 @@ MONTHS_FOR_CB = {
 }
 
 if __name__ == "__main__":
+
+    orders_to_print = []
 
     months = deco.get_months()
 
@@ -46,6 +50,7 @@ if __name__ == "__main__":
     search_btn = QPushButton("Cerca")
 
     def search():
+        global orders_to_print
         print("Ricerca in corso...")
         selected_date = months[cb.currentIndex()]
 
@@ -58,7 +63,7 @@ if __name__ == "__main__":
             orders.extend(deco.get_daily_orders(day))
 
         if len(orders) == 0:
-            status_label.setText("Non sono stati trovati elementi")
+            status_label.setText("Non sono stati trovati elementi.")
             window.repaint()
         else:
             ids = []
@@ -72,6 +77,7 @@ if __name__ == "__main__":
                 ids.append((order["order_id"], customer, order["outstanding_balance"]))
 
             print(ids)
+            orders_to_print = ids
             populate_table(ids)
             status_label.setText("Ricerca terminata.")
             window.repaint()
@@ -79,7 +85,24 @@ if __name__ == "__main__":
 
     search_btn.clicked.connect(search)
 
+    export_btn = QPushButton("Esporta in excel")
+
+    # TODO: Save file dialog
+    def export_excel():
+        global orders_to_print
+
+        if not orders_to_print:
+            status_label.setText("Non ci sono ordini da esportare!")
+        else:
+            populate_excel(orders_to_print)
+            status_label.setText("Ordini esportati correttamente.")
+
+        window.repaint()
+
+    export_btn.clicked.connect(export_excel)
+
     h_layout.addWidget(search_btn)
+    h_layout.addWidget(export_btn)
     layout.addLayout(h_layout)
 
     table = QTableWidget()
@@ -94,7 +117,7 @@ if __name__ == "__main__":
             str_id = str(order[0])
             order_id = QTableWidgetItem(str_id)
             order_customer = QTableWidgetItem(order[1])
-            outstanding_balance = QTableWidgetItem(f"{order[2]}€")
+            outstanding_balance = QTableWidgetItem(f"€{order[2]}")
 
             table.setItem(key, 0, order_id)
             table.setItem(key, 1, order_customer)
