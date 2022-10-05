@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, \
-    QTableWidget, QTableWidgetItem, QHeaderView, QDesktopWidget
+    QTableWidget, QTableWidgetItem, QHeaderView, QDesktopWidget, QFileDialog
 
 import deco
 from excel import populate_excel
@@ -87,14 +87,18 @@ if __name__ == "__main__":
 
     export_btn = QPushButton("Esporta in excel")
 
-    # TODO: Save file dialog
+
     def export_excel():
         global orders_to_print
 
         if not orders_to_print:
             status_label.setText("Non ci sono ordini da esportare!")
         else:
-            populate_excel(orders_to_print)
+            name = QFileDialog.getSaveFileName(filter="Excel (*.xlsx)")
+            filename = name[0]
+            if filename[-5:] != ".xlsx":
+                filename += ".xlsx"
+            populate_excel(filename, orders_to_print)
             status_label.setText("Ordini esportati correttamente.")
 
         window.repaint()
