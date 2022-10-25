@@ -19,6 +19,13 @@ MONTHS_FOR_CB = {
     12: "Dicembre"
 }
 
+PAYMENT_METHODS = [
+    "Bonifico 7gg",
+    "Pagamento Anticipato",
+    "Anticipo 50% e Saldo alla Consegna",
+    "C/assegno"
+]
+
 if __name__ == "__main__":
 
     orders_to_print = []
@@ -47,6 +54,13 @@ if __name__ == "__main__":
 
     h_layout.addWidget(cb)
 
+    cb_payment = QComboBox()
+
+    for method in PAYMENT_METHODS:
+        cb_payment.addItem(method)
+
+    h_layout.addWidget(cb_payment)
+
     search_btn = QPushButton("Cerca")
 
     def search():
@@ -54,13 +68,15 @@ if __name__ == "__main__":
         print("Ricerca in corso...")
         selected_date = months[cb.currentIndex()]
 
+        selected_payment = cb_payment.currentText()
+
         days = deco.get_month_days(selected_date.month, selected_date.year)
 
         status_label.setText("Ricerca in corso...")
         window.repaint()
         orders = []
         for day in days:
-            orders.extend(deco.get_daily_orders(day))
+            orders.extend(deco.get_daily_orders(day, selected_payment))
 
         if len(orders) == 0:
             status_label.setText("Non sono stati trovati elementi.")
