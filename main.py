@@ -20,10 +20,17 @@ MONTHS_FOR_CB = {
 }
 
 PAYMENT_METHODS = [
-    "Bonifico 7gg",
-    "Pagamento Anticipato",
-    "Anticipo 50% e Saldo alla Consegna",
-    "C/assegno"
+    "* Bonifico 30gg",
+    "* Bonifico 60gg",
+    "* Ri.ba. 30gg f.m.",
+    "* Ri.Ba. 60gg f.m.",
+    "* Ri.Ba. 90gg f.m.",
+    "* Ri.Ba. 120gg f.m.",
+    "* Anticipo 50% e saldo prima della consegna",
+    "** Rimessa Diretta",
+    "* Bonifico 120gg f.m.",
+    "* Anticipo 50%, Saldo Ri.Ba. 30gg",
+    "* A Vista Fattura"
 ]
 
 if __name__ == "__main__":
