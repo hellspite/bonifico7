@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, \
-    QTableWidget, QTableWidgetItem, QHeaderView, QDesktopWidget, QFileDialog
+    QListWidget, QTableWidget, QTableWidgetItem, QHeaderView, QDesktopWidget, QFileDialog, QAbstractItemView
 
 import deco
 from excel import populate_excel
@@ -61,12 +61,16 @@ if __name__ == "__main__":
 
     h_layout.addWidget(cb)
 
-    cb_payment = QComboBox()
+    ql_payment = QListWidget()
+
+    ql_payment.setSelectionMode(QAbstractItemView.ExtendedSelection)
+    ql_payment.setAlternatingRowColors(True)
+    ql_payment.setMaximumHeight(100)
 
     for method in PAYMENT_METHODS:
-        cb_payment.addItem(method)
+        ql_payment.addItem(method)
 
-    h_layout.addWidget(cb_payment)
+    h_layout.addWidget(ql_payment)
 
     search_btn = QPushButton("Cerca")
 
@@ -75,7 +79,11 @@ if __name__ == "__main__":
         print("Ricerca in corso...")
         selected_date = months[cb.currentIndex()]
 
-        selected_payment = cb_payment.currentText()
+        selected_list_items = ql_payment.selectedItems()
+
+        selected_payments = []
+        for item in selected_list_items:
+            selected_payments.append(item.text())
 
         days = deco.get_month_days(selected_date.month, selected_date.year)
 
@@ -83,7 +91,7 @@ if __name__ == "__main__":
         window.repaint()
         orders = []
         for day in days:
-            orders.extend(deco.get_daily_orders(day, selected_payment))
+            orders.extend(deco.get_daily_orders(day, selected_payments))
 
         if len(orders) == 0:
             status_label.setText("Non sono stati trovati elementi.")
@@ -97,7 +105,7 @@ if __name__ == "__main__":
                 else:
                     customer = order["billing_details"]["company"]
 
-                ids.append((order["order_id"], customer, order["outstanding_balance"]))
+                ids.append((order["order_id"], customer, order["outstanding_balance"], order["account_terms"]))
 
             print(ids)
             orders_to_print = ids
@@ -138,23 +146,26 @@ if __name__ == "__main__":
     def populate_table(orders):
         rows = len(orders)
         table.setRowCount(rows)
-        table.setColumnCount(3)
+        table.setColumnCount(4)
 
         for key, order in enumerate(orders):
             str_id = str(order[0])
             order_id = QTableWidgetItem(str_id)
             order_customer = QTableWidgetItem(order[1])
             outstanding_balance = QTableWidgetItem(f"€{order[2]}")
+            payment = QTableWidgetItem(order[3])
 
             table.setItem(key, 0, order_id)
             table.setItem(key, 1, order_customer)
             table.setItem(key, 2, outstanding_balance)
+            table.setItem(key, 3, payment)
 
         header = table.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.Stretch)
-        table.setHorizontalHeaderLabels(["Numero Ordine", "Nome Cliente", "Da Pagare"])
+        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        table.setHorizontalHeaderLabels(["Numero Ordine", "Nome Cliente", "Da Pagare", "Metodo di Pagamento"])
 
 
     layout.addWidget(status_label)
