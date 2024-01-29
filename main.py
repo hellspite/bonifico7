@@ -64,6 +64,8 @@ if __name__ == "__main__":
     for month in months:
         cb.addItem(f"{MONTHS_FOR_CB[month.month]} {month.year}")
 
+    cb.setCurrentText(f"{MONTHS_FOR_CB[months[-1].month]} {months[-1].year}")
+
     h_layout.addWidget(cb)
 
     ql_payment = QListWidget()
