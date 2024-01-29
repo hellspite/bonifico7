@@ -25,12 +25,17 @@ PAYMENT_METHODS = [
     "* Ri.ba. 30gg f.m.",
     "* Ri.Ba. 60gg f.m.",
     "* Ri.Ba. 90gg f.m.",
-    "* Ri.Ba. 120gg f.m.",
+    "* Ri.Ba. 60+90gg f.m.",
     "* Anticipo 50% e saldo prima della consegna",
     "** Rimessa Diretta",
     "* Bonifico 120gg f.m.",
     "* Anticipo 50%, Saldo Ri.Ba. 30gg",
-    "* A Vista Fattura"
+    "* A Vista Fattura",
+    "Acconto 30%, Saldo 35% Ri.Ba. 30gg, 35% Ri.Ba. 60gg",
+    "* Acconto 40%, Saldo Ri.Ba. a 30 gg fm",
+    "* Anticipo 50%, Saldo bonifico 30 gg fm",
+    "Acconto 20%, 2° acconto 20%, saldo Ri.ba 30 gg fm",
+    "ACCONTO 40% - SALDO 30% A 30 GG - 30% A 60 GG",
 ]
 
 if __name__ == "__main__":
