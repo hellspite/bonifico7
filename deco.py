@@ -58,7 +58,7 @@ def get_days(month, year):
 
     first_day = date(year, month, 1)
 
-    num_of_days = monthrange(date.today().year, month)
+    num_of_days = monthrange(year, month)
 
     last_day = date(year, month, num_of_days[1])
 
