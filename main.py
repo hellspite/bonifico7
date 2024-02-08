@@ -37,6 +37,7 @@ PAYMENT_METHODS = [
     "Acconto 20%, 2° acconto 20%, saldo Ri.ba 30 gg fm",
     "ACCONTO 40% - SALDO 30% A 30 GG - 30% A 60 GG",
     "* Anticipo 40%, Saldo bonifico 30 gg df",
+    "* Bonifico 60+90gg f.m."
 ]
 
 if __name__ == "__main__":
