@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLay
 
 import deco
 from excel import populate_excel
+from datetime import datetime, date, timedelta
 
 MONTHS_FOR_CB = {
     1: "Gennaio",
@@ -45,6 +46,7 @@ if __name__ == "__main__":
     orders_to_print = []
 
     months = deco.get_months()
+    print(months)
 
     app = QApplication([])
     window = QWidget()
@@ -61,14 +63,28 @@ if __name__ == "__main__":
 
     status_label = QLabel()
 
-    cb = QComboBox()
+    cbm = QComboBox()
+    cby = QComboBox()
 
-    for month in months:
-        cb.addItem(f"{MONTHS_FOR_CB[month.month]} {month.year}")
+    for month in MONTHS_FOR_CB:
+        cbm.addItem(MONTHS_FOR_CB[month])
 
-    cb.setCurrentText(f"{MONTHS_FOR_CB[months[-1].month]} {months[-1].year}")
+    cbm.setCurrentText(f"{MONTHS_FOR_CB[months[-1].month]}")
 
-    h_layout.addWidget(cb)
+    for i in range(5):
+        decrease = 5
+        decrease -= i
+
+        current_year = datetime.now().year
+        year = current_year - decrease
+        cby.addItem(str(year))
+        if i == 4:
+            cby.addItem(str(current_year))
+
+    cby.setCurrentText(f"{datetime.now().year}")
+
+    h_layout.addWidget(cbm)
+    h_layout.addWidget(cby)
 
     ql_payment = QListWidget()
 
@@ -84,9 +100,23 @@ if __name__ == "__main__":
     search_btn = QPushButton("Cerca")
 
     def search():
+        # if there's a table, clean it
+        if table:
+            while table.rowCount() > 0:
+                table.removeRow(0)
+
         global orders_to_print
         print("Ricerca in corso...")
-        selected_date = months[cb.currentIndex()]
+        year = int(cby.currentText())
+        month = cbm.currentIndex() + 1
+
+        selected_date = date(year, month, 1)
+        current_month = date(datetime.now().year, datetime.now().month, 1)
+
+        if selected_date > current_month:
+            status_label.setText("La data selezionata non è corretta!")
+            window.repaint()
+            return
 
         selected_list_items = ql_payment.selectedItems()
 
@@ -94,7 +124,7 @@ if __name__ == "__main__":
         for item in selected_list_items:
             selected_payments.append(item.text())
 
-        days = deco.get_month_days(selected_date.month, selected_date.year)
+        days = deco.get_month_days(month, year)
 
         status_label.setText("Ricerca in corso...")
         window.repaint()
