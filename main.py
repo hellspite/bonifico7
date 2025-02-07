@@ -104,6 +104,7 @@ if __name__ == "__main__":
         if table:
             while table.rowCount() > 0:
                 table.removeRow(0)
+            window.repaint()
 
         global orders_to_print
         print("Ricerca in corso...")
