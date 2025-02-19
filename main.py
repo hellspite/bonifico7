@@ -144,8 +144,17 @@ if __name__ == "__main__":
                     customer = f"{order['billing_details']['firstname']} {order['billing_details']['lastname']}"
                 else:
                     customer = order["billing_details"]["company"]
+                date_shipped = ""
+                if order["date_shipped"] == None:
+                    date_shipped = ""
+                else:
+                    year = order["date_shipped"][0:4]
+                    month = order["date_shipped"][5:7]
+                    day = order["date_shipped"][8:10]
+                    date_shipped = f"{day}-{month}-{year}"
 
-                ids.append((order["order_id"], customer, order["outstanding_balance"], order["account_terms"]))
+                ids.append((order["order_id"], customer, order["outstanding_balance"], order["account_terms"], 
+                            order["customer_po_number"], date_shipped))
 
             print(ids)
             orders_to_print = ids
@@ -186,7 +195,7 @@ if __name__ == "__main__":
     def populate_table(orders):
         rows = len(orders)
         table.setRowCount(rows)
-        table.setColumnCount(4)
+        table.setColumnCount(6)
 
         for key, order in enumerate(orders):
             str_id = str(order[0])
@@ -194,18 +203,24 @@ if __name__ == "__main__":
             order_customer = QTableWidgetItem(order[1])
             outstanding_balance = QTableWidgetItem(f"€{order[2]}")
             payment = QTableWidgetItem(order[3])
+            po_number = QTableWidgetItem(order[4])
+            date_shipped = QTableWidgetItem(order[5])
 
             table.setItem(key, 0, order_id)
             table.setItem(key, 1, order_customer)
             table.setItem(key, 2, outstanding_balance)
             table.setItem(key, 3, payment)
+            table.setItem(key, 4, po_number)
+            table.setItem(key, 5, date_shipped)
 
         header = table.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
         header.setSectionResizeMode(1, QHeaderView.Stretch)
         header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
-        table.setHorizontalHeaderLabels(["Numero Ordine", "Nome Cliente", "Da Pagare", "Metodo di Pagamento"])
+        table.setHorizontalHeaderLabels(["Numero Ordine", "Nome Cliente", 
+                                         "Da Pagare", "Metodo di Pagamento", 
+                                         "Fattura", "Spedizione"])
 
 
     layout.addWidget(status_label)
